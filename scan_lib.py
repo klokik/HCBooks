@@ -2,9 +2,12 @@
 
 book_costs = []
 
-def interleave(items, num):
+def interleave(items, num, limit=None):
   res = [[]]*num
   for k, it in enumerate(items):
+    if (k % num == 0) && (k / num) == limit:
+      break
+
     res[k % num].append(it)
 
   return res
@@ -45,16 +48,21 @@ class BookLib:
   def signup(self, day):
     self.signup_day = day
 
-# def lib_cost(library_books, signup_delay, scans_per_day, days_left):
-#   pass
-
 class ScanQuest:
   def __init__(self, fname):
     libs = []
-    submitted_books = []
     signed_libs = []
-    # @todo: load data: create libs, init days, book_costs
-    pass
+
+    with open(fname) as f:
+      num_books, num_libs, self.days_total = list(map(int, f.readline()))
+      global book_costs
+      book_costs = list(map(int, f.readline()))
+
+      for ind in range(num_libs):
+        lib_num_books, signup_delay, scans_per_day = list(map(int, f.readline()))
+        lib_books = list(map(int, f.readline()))
+
+        self.libs.append(BookLib(ind, lib_books, signup_delay, scans_per_day))
 
   def chooseNextBestLib(self, days_left):
     best_lib = max(self.libs, key=lambda l: l.cost(days_left))
